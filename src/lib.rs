@@ -1,28 +1,36 @@
-use device_driver::{
-    embedded_io::{Read, Write},
-    implement_device, AddressableDevice, BufferDevice, CommandDevice, Register, RegisterDevice,
-};
-use embedded_hal::i2c::{Error, I2c as I2cHal};
+use device_driver::{implement_device, AddressableDevice, Register, RegisterDevice};
+use embedded_hal::i2c::{Error, ErrorKind, I2c};
+use registers::PsSt;
 
+const VCNL36825T_ADDRESS: u8 = 0x60;
+const VCNL36825T_ID: u16 = 0x0026;
+
+#[derive(Debug)]
+pub enum PSError {
+    InvalidID,
+    I2CError(ErrorKind),
+}
 pub struct VCNL36825T<I2C> {
     i2c: I2C,
-    last_command: u8,
-    last_buffer: u16,
 }
 
 impl<I2C> AddressableDevice for VCNL36825T<I2C> {
     type AddressType = u8;
 }
 
-impl<I2C> RegisterDevice for VCNL36825T<I2C> {
-    type Error = ();
+impl<I2C: I2c> RegisterDevice for VCNL36825T<I2C> {
+    //type Error = I2C::Error;
+    type Error = PSError;
 
     fn write_register<const SIZE_BYTES: usize>(
         &mut self,
         address: Self::AddressType,
         data: &device_driver::bitvec::prelude::BitArray<[u8; SIZE_BYTES]>,
     ) -> Result<(), Self::Error> {
-        self.i2c.wr
+            let mut buffer = [0u8; 3];
+            buffer[0] = address;
+            buffer[1..].copy_from_slice(&data.as_raw_slice()[..SIZE_BYTES]);
+            self.i2c.write(VCNL36825T_ADDRESS, &buffer).map_err(|e| PSError::I2CError(e.kind()))
     }
 
     fn read_register<const SIZE_BYTES: usize>(
@@ -30,28 +38,41 @@ impl<I2C> RegisterDevice for VCNL36825T<I2C> {
         address: Self::AddressType,
         data: &mut device_driver::bitvec::prelude::BitArray<[u8; SIZE_BYTES]>,
     ) -> Result<(), Self::Error> {
-        todo!()
+        let mut buffer = [0u8; 2];
+        self.i2c.write_read(VCNL36825T_ADDRESS, &[address], &mut buffer).map_err(|e| PSError::I2CError(e.kind()))?;
+        data.as_raw_mut_slice()[..SIZE_BYTES].copy_from_slice(&buffer[..SIZE_BYTES]);
+        Ok(())
     }
 }
 
-impl<I2C: Default> Default for VCNL36825T<I2C> {
+impl<I2C: I2c + Default> Default for VCNL36825T<I2C> {
     fn default() -> Self {
         Self::new(I2C::default()).unwrap()
     }
 }
 
-impl<I2C> VCNL36825T<I2C>
-where
-    I2C: I2cHal,
+impl<I2C: I2c> VCNL36825T<I2C>
 {
-    pub fn new(i2c: I2C) -> Result<Self, E> {
+    pub fn new(i2c: I2C) -> Result<Self, PSError> {
         let mut vcnl36825t = VCNL36825T {
-            i2c,
-            last_command: 0,
-            last_buffer: 0,
+            i2c
         };
-        // TODO Check id
+        if vcnl36825t.id().read().unwrap().device_id() != VCNL36825T_ID {
+            return Err(PSError::InvalidID);
+        }
+        vcnl36825t.ps_thdl().clear()?;
         Ok(vcnl36825t)
+    }
+
+    pub fn destroy(self) -> I2C {
+        self.i2c
+    }
+
+    pub fn power_on(&mut self) -> Result<(), PSError> {
+        self.ps_conf_1().write(|w| w.res_1(1).res_2(1))?;
+        self.ps_conf_2().write(|w| w.ps_st(PsSt::Stop))?;
+        self.ps_conf_1().write(|w| w.ps_on(true).ps_cal(true).res_1(1).res_2(1))?;
+        self.ps_conf_2().write(|w| w.ps_st(PsSt::Start))
     }
 }
 
@@ -64,9 +85,11 @@ pub mod registers {
                 const ADDRESS: u8 = 0x00;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x01, 0x00];
-
+                res1: u8 = 0..1,
                 ps_on: bool = 1,
                 ps_cal: bool = 7,
+                res2: u8 = 9..10,
+
             },
             register PS_CONF2 {
                 type RWType = ReadWrite;
