@@ -1,0 +1,9 @@
+[package]
+name = "vcnl36825t"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+device-driver = "0.7.0"
+embedded-hal = "1.0.0"
+num_enum = "0.7.3"
