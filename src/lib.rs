@@ -19,7 +19,6 @@ impl<I2C> AddressableDevice for VCNL36825T<I2C> {
 }
 
 impl<I2C: I2c> RegisterDevice for VCNL36825T<I2C> {
-    //type Error = I2C::Error;
     type Error = PSError;
 
     fn write_register<const SIZE_BYTES: usize>(
