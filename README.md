@@ -1,7 +1,7 @@
 # Vishay VCNL36825T proximity sensor driver for embedded-hal i2c traits
 
-[![crates.io](https://img.shields.io/crates/v/vcnl36825t.svg)](https://crates.io/crates/vcnl36825t)
-[![Docs](https://docs.rs/vcnl36825t/badge.svg)](https://docs.rs/vcnl36825t)
+[![crates.io](https://img.shields.io/crates/v/vcnl36825t-rs.svg)](https://crates.io/crates/vcnl36825t-rs)
+[![Docs](https://docs.rs/vcnl36825t-rs/badge.svg)](https://docs.rs/vcnl36825t-rs)
 
 This is a platform agnostic Rust driver for the Vishay VCNL36825T proximity sensor using the [`embedded-hal`](
 
