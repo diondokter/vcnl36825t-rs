@@ -8,7 +8,7 @@ description = "Vishay VCNL36825T proximity sensor driver for embedded-hal i2c tr
 documentation = "https://docs.rs/crate/ws2811-spi"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
-repository = "https://github.com/LeFrenchPOC/vcnl36825t"
+repository = "https://github.com/LeFrenchPOC/vcnl36825t-rs"
 edition = "2021"
 
 [dependencies]
