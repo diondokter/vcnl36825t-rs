@@ -1,3 +1,5 @@
+#![no_std]
+
 use device_driver::{implement_device, AddressableDevice, RegisterDevice};
 use embedded_hal::i2c::{Error, ErrorKind, I2c};
 use registers::PsSt;
