@@ -1,6 +1,14 @@
 [package]
-name = "vcnl36825t"
+name = "vcnl36825t-rs"
 version = "0.1.0"
+authors = ["Axel Chabot <axel.chabot@lefrenchpoc.fr>"]
+categories = ["embedded", "no-std", "hardware-support"]
+keywords = ["proximity-sensor", "vcnl36825t"]
+description = "Vishay VCNL36825T proximity sensor driver for embedded-hal i2c traits"
+documentation = "https://docs.rs/crate/ws2811-spi"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/LeFrenchPOC/vcnl36825t"
 edition = "2021"
 
 [dependencies]

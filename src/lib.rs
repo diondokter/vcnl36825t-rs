@@ -26,10 +26,12 @@ impl<I2C: I2c> RegisterDevice for VCNL36825T<I2C> {
         address: Self::AddressType,
         data: &device_driver::bitvec::prelude::BitArray<[u8; SIZE_BYTES]>,
     ) -> Result<(), Self::Error> {
-            let mut buffer = [0u8; 3];
-            buffer[0] = address;
-            buffer[1..].copy_from_slice(&data.as_raw_slice()[..SIZE_BYTES]);
-            self.i2c.write(VCNL36825T_ADDRESS, &buffer).map_err(|e| PSError::I2CError(e.kind()))
+        let mut buffer = [0u8; 3];
+        buffer[0] = address;
+        buffer[1..].copy_from_slice(&data.as_raw_slice()[..SIZE_BYTES]);
+        self.i2c
+            .write(VCNL36825T_ADDRESS, &buffer)
+            .map_err(|e| PSError::I2CError(e.kind()))
     }
 
     fn read_register<const SIZE_BYTES: usize>(
@@ -38,7 +40,9 @@ impl<I2C: I2c> RegisterDevice for VCNL36825T<I2C> {
         data: &mut device_driver::bitvec::prelude::BitArray<[u8; SIZE_BYTES]>,
     ) -> Result<(), Self::Error> {
         let mut buffer = [0u8; 2];
-        self.i2c.write_read(VCNL36825T_ADDRESS, &[address], &mut buffer).map_err(|e| PSError::I2CError(e.kind()))?;
+        self.i2c
+            .write_read(VCNL36825T_ADDRESS, &[address], &mut buffer)
+            .map_err(|e| PSError::I2CError(e.kind()))?;
         data.as_raw_mut_slice()[..SIZE_BYTES].copy_from_slice(&buffer[..SIZE_BYTES]);
         Ok(())
     }
@@ -50,12 +54,9 @@ impl<I2C: I2c + Default> Default for VCNL36825T<I2C> {
     }
 }
 
-impl<I2C: I2c> VCNL36825T<I2C>
-{
+impl<I2C: I2c> VCNL36825T<I2C> {
     pub fn new(i2c: I2C) -> Result<Self, PSError> {
-        let mut vcnl36825t = VCNL36825T {
-            i2c
-        };
+        let mut vcnl36825t = VCNL36825T { i2c };
         if vcnl36825t.id().read().unwrap().device_id() != VCNL36825T_ID {
             return Err(PSError::InvalidID);
         }
@@ -70,7 +71,8 @@ impl<I2C: I2c> VCNL36825T<I2C>
     pub fn power_on(&mut self) -> Result<(), PSError> {
         self.ps_conf_1().write(|w| w.res_1(1).res_2(1))?;
         self.ps_conf_2().write(|w| w.ps_st(PsSt::Stop))?;
-        self.ps_conf_1().write(|w| w.ps_on(true).ps_cal(true).res_1(1).res_2(1))?;
+        self.ps_conf_1()
+            .write(|w| w.ps_on(true).ps_cal(true).res_1(1).res_2(1))?;
         self.ps_conf_2().write(|w| w.ps_st(PsSt::Start))
     }
 }
@@ -142,6 +144,7 @@ pub mod registers {
                 const RESET_VALUE: [u8] = [0x00, 0x00];
 
                 ps_sp_int: bool = 2,
+                res3: u8 = 3..4,
                 ps_forcenum: u8 as enum PsForcenum {
                     OneCycle = 0,
                     TwoCycle = 1,
