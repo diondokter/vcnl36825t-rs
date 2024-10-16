@@ -85,6 +85,7 @@ pub mod registers {
         impl<I2C> VCNL36825T<I2C> {
             register PS_CONF1 {
                 type RWType = ReadWrite;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0x00;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x01, 0x00];
@@ -96,6 +97,7 @@ pub mod registers {
             },
             register PS_CONF2 {
                 type RWType = ReadWrite;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0x03;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x01, 0x00];
@@ -141,6 +143,7 @@ pub mod registers {
             },
             register PS_CONF3 {
                 type RWType = ReadWrite;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0x04;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
@@ -178,6 +181,7 @@ pub mod registers {
             },
             register PS_THDL {
                 type RWType = ReadWrite;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0x05;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
@@ -185,6 +189,7 @@ pub mod registers {
             },
             register PS_THDH {
                 type RWType = ReadWrite;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0x06;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
@@ -192,6 +197,7 @@ pub mod registers {
             },
             register PS_CANC {
                 type RWType = ReadWrite;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0x07;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
@@ -199,6 +205,7 @@ pub mod registers {
             },
             register PS_CONF4 {
                 type RWType = ReadWrite;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0x08;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
@@ -228,6 +235,7 @@ pub mod registers {
             },
             register PS_DATA {
                 type RWType = ReadOnly;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0xF8;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
@@ -235,6 +243,7 @@ pub mod registers {
             },
             register INT_FLAG {
                 type RWType = ReadOnly;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0xF9;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
@@ -245,6 +254,7 @@ pub mod registers {
             },
             register ID {
                 type RWType = ReadOnly;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0xFA;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x26, 0x00];
@@ -252,6 +262,7 @@ pub mod registers {
             },
             register PS_AC_DATA {
                 type RWType = ReadOnly;
+                type ByteOrder = LE;
                 const ADDRESS: u8 = 0xFB;
                 const SIZE_BITS: usize = 16;
                 const RESET_VALUE: [u8] = [0x00, 0x00];
