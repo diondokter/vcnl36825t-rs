@@ -12,6 +12,6 @@ repository = "https://github.com/LeFrenchPOC/vcnl36825t-rs"
 edition = "2021"
 
 [dependencies]
-device-driver = "0.7.0"
+device-driver = "1.0.0-rc.0"
 embedded-hal = "1.0.0"
-num_enum = { version = "0.7.3", default_features = false }
+embedded-hal-async = "1.0.0"
